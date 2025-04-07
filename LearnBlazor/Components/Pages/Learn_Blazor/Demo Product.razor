@@ -3,34 +3,17 @@
 <div class="row">
 
     <h2 class="text-primary">DemoProduct</h2>
+    <p>Favorite Count = @favCount</p> <br/>
+    <p>Selected Product - @SelectedProduct</p>
     <div class="p-2 mt-2">
         <div class="row">
             @foreach(var prod in ProductList)
             {
-                <div class="bg-light border col-6">
-                    <h4 class="text-secondary">Product - @prod.Id</h4>
-                    Name - @prod.Name <br />
-                    Show Properties : 
-                    <input type="checkbox" @bind="prod.IsActive" />
-
-                    @if (prod.IsActive)
-                    {
-                        @foreach(var prodProp in prod.ProductProperties)
-                        {
-                            <p>@prodProp.Key - @prodProp.Value</p>
-                        }
-                    }
-                    <br />
-                    <input type="button" class="btn btn-danger" style="width:100px" value="Delete" 
-                    @onclick="()=>RemoveProduct(prod.Id)"
-                    /> 
-                </div>
+                <_IndividualProduct prod="@prod" 
+                    OnFavoriteUpdated="FavCountChange"
+                    OnSelectedProductChange="UpdateSelectedProduct">
+                </_IndividualProduct>
             }
-        </div>
-        <div class="row pt-4">
-            <input type="button" class="btn btn-success" style="width:100px" value="Counter"
-            @onclick="()=>IncrementCount(5)" />
-            Counter : @count
         </div>
     </div>
 
@@ -38,6 +21,8 @@
 
 @code {
     public int count = 0;
+    public int favCount = 0;
+    public string SelectedProduct = string.Empty;
 
     List<Product> ProductList = new();
 
@@ -72,18 +57,25 @@
             });
     }
 
-    private void IncrementCount(int counter)
+    protected void FavCountChange(bool isSeleted)
     {
-        count+=counter;
-    }
-
-    private void RemoveProduct(int productId)
-    {
-        var prod = ProductList.FirstOrDefault(u => u.Id == productId);
-        if (prod!=null)
+        if (isSeleted)
         {
-        ProductList.Remove(prod);
+            favCount++;
+        }
+        else
+        {
+            if (favCount > 0)
+            {
+                favCount--;
+            }
         }
     }
+
+    protected void UpdateSelectedProduct(string productName)
+    {
+        SelectedProduct = productName;
+    }
+
 }
 
