@@ -1,4 +1,5 @@
-﻿
+﻿@inject IJSRuntime _JSRuntime
+
 <div>
     <div class="alert alert-info">
         @Title
@@ -38,4 +39,10 @@
 
     [CascadingParameter]
     public string? MessageForGrandChild { get; set; }
+
+    public async Task ToastrSuccess()
+    {
+        //await _jSRuntime.InvokeVoidAsync("showToastr", "success", "This is a success message");
+        await _JSRuntime.ToastrSuccess("This is a success message");
+    }
 }
