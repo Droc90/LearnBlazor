@@ -1,0 +1,111 @@
+﻿@page "/blazor-forms"
+
+<div class="col-12 offset-md-2 col-md-8 border">
+    <h2 class="text-success">Declan is Awesome</h2>
+    <div class="text-center pt-4">
+        <hr />
+    </div>
+    <div class="mx-2 px-2">
+        <EditForm FormName="ProductCreate" Model="product" OnValidSubmit="HandleProductCreate" OnInvalidSubmit="HandleProductCreateInvalid" >
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group py-2">
+                Product Name
+                <InputText class="form-control" @bind-Value="product.Name" />
+                <ValidationMessage For="@(() => product.Name)" />
+            </div>
+            <div class="form-group py-2">
+                Price
+                <InputNumber class="form-control" @bind-Value="product.Price" />
+                <ValidationMessage For="@(() => product.Price)" />
+            </div>
+            <div class="form-group py-2">
+                Category
+                <InputSelect class="form-control" @bind-Value="@product.Category">
+                    @foreach(var cat in Enum.GetValues(typeof(Category)))
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group py-2">
+                IsActive
+                <InputCheckbox @bind-Value="product.IsActive" />
+            </div>
+
+            <div class="form-group py-2">
+                Available After
+                <InputDate class="form-control" @bind-Value="product.AvailableAfter" />
+            </div>
+
+            <button type="submit" class="btn btn-primary my-3" style="width:200px;">
+                Create Product
+            </button>
+            <p class="text-success">
+                @(isProcessing == true ? "Processing..." : "")
+
+            </p>
+
+        </EditForm>
+
+@*         <EditForm FormName="ProductCreateTemp" Model="productTemp" OnValidSubmit="HandleProductCreateTemp" >
+
+
+        </EditForm> *@
+    </div>
+
+    @if(createdProduct is not null)
+    {
+        <div class="mx-2 pt-4">
+            <hr />
+            <h2 class="text-success">Product Created</h2>
+            <div class="px-4">
+                Name : @createdProduct.Name <br />
+                Price : @createdProduct.Price <br />
+                Category : @createdProduct.Category <br />
+                IsActive : @createdProduct.IsActive <br />
+                Available After : @createdProduct.AvailableAfter <br />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [SupplyParameterFromForm(FormName ="ProductCreate")]
+    public Product product { get; set; } = new Product();
+
+    // [SupplyParameterFromForm(FormName ="ProductCreateTemp")]
+    // public Product productTemp { get; set; } = new Product();
+
+    private Product? createdProduct { get; set; } 
+
+    private bool isProcessing = false;
+
+    private async Task HandleProductCreate()
+    {
+        isProcessing = true;
+        createdProduct = null;
+        await Task.Delay(200);
+        createdProduct = product;
+        product = new();
+        isProcessing = false;
+    }
+
+    private async Task HandleProductCreateTemp()
+    {
+        isProcessing = true;
+        createdProduct = null;
+        await Task.Delay(200);
+        createdProduct = productTemp;
+        productTemp = new();
+        isProcessing = false;
+    }
+
+    // private async Task HandleProductCreateInvalid()
+    // {
+    //     isProcessing = true;
+    //     await Task.Delay(100);
+    //     isProcessing = false;
+    // }
+}
